@@ -40,7 +40,7 @@ git_prompt_info() {
 
 docker_machine_prompt_info() {
     if [[ -n "$DOCKER_MACHINE_NAME" ]]; then
-        echo "$fg[green] @$DOCKER_MACHINE_NAME"
+        echo "$fg[green] $GURI_DOCKER_ICON$DOCKER_MACHINE_NAME"
     fi
 }
 
@@ -56,6 +56,7 @@ virtualenv_indicator() {
 
 local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 
+GURI_DOCKER_ICON="@"
 ZSH_THEME_GIT_PROMPT_PREFIX="  "
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
 ZSH_THEME_GIT_PROMPT_DIRTY="$fg[red]"
