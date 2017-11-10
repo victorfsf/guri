@@ -1,6 +1,6 @@
 # Guri
 
-Simple and fast Oh-My-Zsh theme for Python developers
+A Simple and fast Oh-My-Zsh theme, based on [Pure](https://github.com/sindresorhus/pure)'s design.
 
 ![Guri Screenshot](https://github.com/victorfsf/guri/raw/master/screenshot.png)
 
