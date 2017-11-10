@@ -44,19 +44,17 @@ docker_machine_prompt_info() {
     fi
 }
 
-virtualenv_indicator() {
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-        psvar[1]=""
-        psvar[2]=""
-    else
-        psvar[1]="${VIRTUAL_ENV##*/} "
-        psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+run_dot_file() {
+    if [[ "$GURI_EXEC_DOT_FILE" -eq 1 ]] && [[ -f "$GURI_DOT_FILE" ]]; then
+        source "$GURI_DOT_FILE"
     fi
 }
 
 local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 
 GURI_DOCKER_ICON="@"
+GURI_DOT_FILE=".guri"
+GURI_EXEC_DOT_FILE=1
 ZSH_THEME_GIT_PROMPT_PREFIX="  "
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
 ZSH_THEME_GIT_PROMPT_DIRTY="$fg[red]"
@@ -66,6 +64,7 @@ ZSH_THEME_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
 ZSH_THEME_GIT_PROMPT_DIVERGED="$ZSH_THEME_GIT_PROMPT_AHEAD$ZSH_THEME_GIT_PROMPT_BEHIND"
 VIRTUAL_ENV_DISABLE_PROMPT="yes"
 
+add-zsh-hook precmd run_dot_file
 add-zsh-hook precmd virtualenv_indicator
 
 PROMPT='
