@@ -29,7 +29,7 @@ To get the same font and colors used on the screenshot, use the following config
 
 #### Font: 
 
-Install the [Fira Mono for Powerline](https://github.com/powerline/fonts/) and set it with `style: Medium` and `size: 10`.
+Install the [Fira Mono for Powerline](https://github.com/powerline/fonts/) and set it with `style: Medium`.
 
 #### Colors:
 
