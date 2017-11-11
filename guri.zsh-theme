@@ -44,6 +44,16 @@ docker_machine_prompt_info() {
     fi
 }
 
+virtualenv_indicator() {
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        psvar[1]=""
+        psvar[2]=""
+    else
+        psvar[1]="${VIRTUAL_ENV##*/} "
+        psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+    fi
+}
+
 run_dot_file() {
     if [[ "$GURI_EXEC_DOT_FILE" -eq 1 ]] && [[ -f "$GURI_DOT_FILE" ]]; then
         source "$GURI_DOT_FILE"
