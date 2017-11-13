@@ -33,8 +33,8 @@ git_prompt_info() {
     elif $(echo "$index" | grep '^## .*behind' &> /dev/null); then
         git_status=" $ZSH_THEME_GIT_PROMPT_BEHIND"
     fi
-    printf "$fg_bold[white]"
-    printf "$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)"
+    printf "$fg_bold[white]$(parse_git_dirty)"
+    printf "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)"
     printf "$ZSH_THEME_GIT_PROMPT_SUFFIX$git_status$reset_color"
 }
 
@@ -45,10 +45,7 @@ docker_machine_prompt_info() {
 }
 
 virtualenv_indicator() {
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-        psvar[1]=""
-        psvar[2]=""
-    else
+    if [[ -n "$VIRTUAL_ENV" ]]; then
         psvar[1]="${VIRTUAL_ENV##*/} "
         psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
     fi
@@ -65,7 +62,7 @@ local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 GURI_DOCKER_ICON="@"
 GURI_DOT_FILE=".guri"
 GURI_EXEC_DOT_FILE=1
-ZSH_THEME_GIT_PROMPT_PREFIX="  "
+ZSH_THEME_GIT_PROMPT_PREFIX="  $fg[white]"
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
 ZSH_THEME_GIT_PROMPT_DIRTY="$fg[red]"
 ZSH_THEME_GIT_PROMPT_CLEAN="$fg[white]"
