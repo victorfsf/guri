@@ -25,6 +25,7 @@ git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return 0
     command git -c gc.auto=0 fetch &>/dev/null 2>&1 &|
     local index=$(command git status --porcelain -b 2> /dev/null)
+
     local git_status
     if $(echo "$index" | grep '^## .*ahead* .*behind' &> /dev/null); then
         git_status=" $ZSH_THEME_GIT_PROMPT_DIVERGED"
@@ -33,7 +34,20 @@ git_prompt_info() {
     elif $(echo "$index" | grep '^## .*behind' &> /dev/null); then
         git_status=" $ZSH_THEME_GIT_PROMPT_BEHIND"
     fi
-    printf "$fg_bold[white]$(parse_git_dirty)"
+
+    local git_stash
+    if [[ "$GURI_SHOW_GIT_STASH" -eq 1 ]]; then
+        git_stash="$(command git stash list | wc -l)"
+        if [[ "$git_stash" > 0 ]]; then
+            git_stash="$reset_color$fg[magenta]+$git_stash $fg_bold[white]"
+        else
+            git_stash=" "
+        fi
+    else
+        git_stash=" "
+    fi
+
+    printf "$(parse_git_dirty)$git_stash"
     printf "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)"
     printf "$ZSH_THEME_GIT_PROMPT_SUFFIX$git_status$reset_color"
 }
@@ -62,10 +76,11 @@ local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 GURI_DOCKER_ICON="@"
 GURI_DOT_FILE=".guri"
 GURI_EXEC_DOT_FILE=1
-ZSH_THEME_GIT_PROMPT_PREFIX="  $fg[white]"
+GURI_SHOW_GIT_STASH=1
+ZSH_THEME_GIT_PROMPT_PREFIX="$fg[white]"
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
-ZSH_THEME_GIT_PROMPT_DIRTY="$fg[red]"
-ZSH_THEME_GIT_PROMPT_CLEAN="$fg[white]"
+ZSH_THEME_GIT_PROMPT_DIRTY=" $fg_bold[red]"
+ZSH_THEME_GIT_PROMPT_CLEAN=" $fg_bold[white]"
 ZSH_THEME_GIT_PROMPT_AHEAD="$fg[green]⇡"
 ZSH_THEME_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
 ZSH_THEME_GIT_PROMPT_DIVERGED="$ZSH_THEME_GIT_PROMPT_AHEAD$ZSH_THEME_GIT_PROMPT_BEHIND"
