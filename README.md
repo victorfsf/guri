@@ -33,7 +33,7 @@ Install the [Fira Mono for Powerline](https://github.com/powerline/fonts/) and s
 
 #### Colors:
 
-Download the [ZSH Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) plugin for... syntax highlighting on your shell.
+Download the [ZSH Syntax Highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) plugin for... Syntax highlighting on your shell.
 
 ###### Background: #282a36 ![#282a36](https://placehold.it/15/282a36/000000?text=+)
 ###### Foreground: #eff0eb ![#eff0eb](https://placehold.it/15/eff0eb/000000?text=+)
