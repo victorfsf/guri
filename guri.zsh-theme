@@ -14,6 +14,8 @@ get_folder_level() {
 ssh_prompt_info() {
     if [[ -n "$SSH_CONNECTION" ]]; then
         echo "$fg[magenta]%n@%m » "
+    elif [[ "$USER" == "root" ]]; then
+        echo "$fg[red]%n » "
     fi
 }
 
