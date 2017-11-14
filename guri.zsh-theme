@@ -62,6 +62,9 @@ virtualenv_indicator() {
     if [[ -n "$VIRTUAL_ENV" ]]; then
         psvar[1]="${VIRTUAL_ENV##*/} "
         psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+    else
+        psvar[1]=""
+        psvar[2]=""
     fi
 }
 
