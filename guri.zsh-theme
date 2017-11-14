@@ -88,7 +88,7 @@ dockerm_prompt_info() {
 exec_time_prompt_info() {
     [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
     if [[ "$GURI_EXEC_TIME" -ge "$GURI_MIN_EXEC_TIME" ]]; then
-    	local human_time
+    	local human_time time_color
     	local days=$(( $GURI_EXEC_TIME / 60 / 60 / 24 ))
     	local hours=$(( $GURI_EXEC_TIME / 60 / 60 % 24 ))
     	local minutes=$(( $GURI_EXEC_TIME / 60 % 60 ))
@@ -97,7 +97,14 @@ exec_time_prompt_info() {
     	(( hours > 0 )) && human_time+="${hours}h "
     	(( minutes > 0 )) && human_time+="${minutes}m "
     	human_time+="${seconds}s"
-        echo " $fg_bold[cyan]$human_time$reset_color"
+        if (( hours > 0 || days > 0 )); then
+            time_color="$fg_bold[red]"
+        elif (( minutes > 0 )); then
+            time_color="$fg_bold[magenta]"
+        else
+            time_color="$fg_bold[cyan]"
+        fi
+        echo " $time_color$human_time$reset_color"
     fi
 }
 
