@@ -79,7 +79,7 @@ run_dot_file() {
 local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
 
 GURI_DOCKER_ICON="@"
-GURI_DOT_FILE=".guri"
+GURI_DOT_FILE=".gurirc"
 GURI_EXEC_DOT_FILE=1
 GURI_SHOW_GIT_STASH=1
 ZSH_THEME_GIT_PROMPT_PREFIX="$fg[white]"
