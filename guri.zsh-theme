@@ -1,3 +1,27 @@
+GURI_DOCKER_ICON="@"
+GURI_DOT_FILE=".gurirc"
+GURI_EXEC_DOT_FILE=true
+GURI_SHOW_GIT_STASH=true
+GURI_SHOW_EXEC_TIME=true
+GURI_MIN_EXEC_TIME=1
+GURI_PROMPT_SYMBOL="➜"
+GURI_GIT_PROMPT_PREFIX="$fg[white]"
+GURI_GIT_PROMPT_SUFFIX=""
+GURI_GIT_PROMPT_DIRTY=" $fg_bold[red]"
+GURI_GIT_PROMPT_CLEAN=" $fg_bold[white]"
+GURI_GIT_PROMPT_AHEAD="$fg[green]⇡"
+GURI_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
+GURI_GIT_PROMPT_DIVERGED="$GURI_GIT_PROMPT_AHEAD$GURI_GIT_PROMPT_BEHIND"
+
+ZSH_THEME_GIT_PROMPT_PREFIX="$GURI_GIT_PROMPT_PREFIX"
+ZSH_THEME_GIT_PROMPT_SUFFIX="$GURI_GIT_PROMPT_SUFFIX"
+ZSH_THEME_GIT_PROMPT_DIRTY="$GURI_GIT_PROMPT_DIRTY"
+ZSH_THEME_GIT_PROMPT_CLEAN="$GURI_GIT_PROMPT_CLEAN"
+ZSH_THEME_GIT_PROMPT_AHEAD="$GURI_GIT_PROMPT_AHEAD"
+ZSH_THEME_GIT_PROMPT_BEHIND="$GURI_GIT_PROMPT_BEHIND"
+ZSH_THEME_GIT_PROMPT_DIVERGED="$GURI_GIT_PROMPT_DIVERGED"
+
+VIRTUAL_ENV_DISABLE_PROMPT="yes"
 
 get_pwd() {
     if [[ "$PWD" == "$HOME" ]]; then
@@ -20,7 +44,8 @@ ssh_prompt_info() {
 }
 
 level_prompt_info() {
-    echo "$fg_bold[cyan]$(get_folder_level)»$reset_color $(ssh_prompt_info)$fg[blue]$(get_pwd)"
+    printf "$fg_bold[cyan]$(get_folder_level)»"
+    printf "$reset_color $(ssh_prompt_info)$fg[blue]$(get_pwd)"
 }
 
 git_prompt_info() {
@@ -38,7 +63,7 @@ git_prompt_info() {
     fi
 
     local git_stash
-    if [[ "$GURI_SHOW_GIT_STASH" -eq 1 ]]; then
+    if [[ "$GURI_SHOW_GIT_STASH" == true ]]; then
         git_stash="$(command git stash list | wc -l)"
         if [[ "$git_stash" > 0 ]]; then
             git_stash="$reset_color$fg[magenta]+$git_stash $fg_bold[white]"
@@ -54,9 +79,31 @@ git_prompt_info() {
     printf "$ZSH_THEME_GIT_PROMPT_SUFFIX$git_status$reset_color"
 }
 
-docker_machine_prompt_info() {
+dockerm_prompt_info() {
     if [[ -n "$DOCKER_MACHINE_NAME" ]]; then
         echo "$fg[green] $GURI_DOCKER_ICON$DOCKER_MACHINE_NAME"
+    fi
+}
+
+exec_time_prompt_info() {
+    [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
+    if [[ "$GURI_EXEC_TIME" -ge "$GURI_MIN_EXEC_TIME" ]]; then
+    	local human_time
+    	local days=$(( $GURI_EXEC_TIME / 60 / 60 / 24 ))
+    	local hours=$(( $GURI_EXEC_TIME / 60 / 60 % 24 ))
+    	local minutes=$(( $GURI_EXEC_TIME / 60 % 60 ))
+    	local seconds=$(( $GURI_EXEC_TIME % 60 ))
+    	(( days > 0 )) && human_time+="${days}d "
+    	(( hours > 0 )) && human_time+="${hours}h "
+    	(( minutes > 0 )) && human_time+="${minutes}m "
+    	human_time+="${seconds}s"
+        echo " $fg_bold[cyan]$human_time$reset_color"
+    fi
+}
+
+run_dot_file() {
+    if [[ "$GURI_EXEC_DOT_FILE" == true ]] && [[ -f "$GURI_DOT_FILE" ]]; then
+        source "$GURI_DOT_FILE"
     fi
 }
 
@@ -70,30 +117,29 @@ virtualenv_indicator() {
     fi
 }
 
-run_dot_file() {
-    if [[ "$GURI_EXEC_DOT_FILE" -eq 1 ]] && [[ -f "$GURI_DOT_FILE" ]]; then
-        source "$GURI_DOT_FILE"
-    fi
+exec_time_start() {
+    [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
+    GURI_EXEC_TIME_START="$(date +%s)"
 }
 
-local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ )"
+exec_time_stop() {
+    [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
+    [[ -n "$GURI_EXEC_TIME" ]] && unset GURI_EXEC_TIME
+    [[ -z "$GURI_EXEC_TIME_START" ]] && return
+    GURI_EXEC_TIME="$(expr $(date +%s) - $GURI_EXEC_TIME_START )"
+    unset GURI_EXEC_TIME_START
+}
 
-GURI_DOCKER_ICON="@"
-GURI_DOT_FILE=".gurirc"
-GURI_EXEC_DOT_FILE=1
-GURI_SHOW_GIT_STASH=1
-ZSH_THEME_GIT_PROMPT_PREFIX="$fg[white]"
-ZSH_THEME_GIT_PROMPT_SUFFIX=""
-ZSH_THEME_GIT_PROMPT_DIRTY=" $fg_bold[red]"
-ZSH_THEME_GIT_PROMPT_CLEAN=" $fg_bold[white]"
-ZSH_THEME_GIT_PROMPT_AHEAD="$fg[green]⇡"
-ZSH_THEME_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
-ZSH_THEME_GIT_PROMPT_DIVERGED="$ZSH_THEME_GIT_PROMPT_AHEAD$ZSH_THEME_GIT_PROMPT_BEHIND"
-VIRTUAL_ENV_DISABLE_PROMPT="yes"
+get_ret_status() {
+    echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL :%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL )"
+}
 
 add-zsh-hook precmd run_dot_file
 add-zsh-hook precmd virtualenv_indicator
 
+add-zsh-hook preexec exec_time_start
+add-zsh-hook precmd exec_time_stop
+
 PROMPT='
-$(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(docker_machine_prompt_info)
-$reset_color%1v${ret_status}$reset_color'
+$(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(dockerm_prompt_info)$(exec_time_prompt_info)
+$reset_color%1v$(get_ret_status)$reset_color'
