@@ -138,7 +138,7 @@ exec_time_stop() {
 }
 
 get_ret_status() {
-    echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL :%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL )"
+    echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL:%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL) "
 }
 
 add-zsh-hook precmd run_dot_file

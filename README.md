@@ -10,7 +10,7 @@ A Simple and fast Oh-My-Zsh theme, based on [Pure](https://github.com/sindresorh
 
 Download the file and save it to `~/.oh-my-zsh`:
 ```
-curl -o $HOME/.oh-my-zsh/themes/guri.zsh-theme https://raw.githubusercontent.com/victorfsf/guri/master/guri.zsh-theme
+curl -o $HOME/.oh-my-zsh/custom/themes/guri.zsh-theme https://raw.githubusercontent.com/victorfsf/guri/master/guri.zsh-theme
 ```
 
 Then, update the `ZSH_THEME` variable in your `~/.zshrc`:
@@ -27,7 +27,7 @@ And reload your shell:
 
 To get the same font and colors used on the screenshot, use the following configurations:
 
-#### Font: 
+#### Font:
 
 Install the [Fira Mono for Powerline](https://github.com/powerline/fonts/) and set it with `style: Medium`.
 
