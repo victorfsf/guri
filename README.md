@@ -8,9 +8,9 @@ A Simple and fast Oh-My-Zsh theme, based on [Pure](https://github.com/sindresorh
 
 #### This theme requires [Oh-My-Zsh](https://github.com/robbyrussell/oh-my-zsh) with Zsh version 5.1.1 or higher.
 
-Download the file and save it to `~/.oh-my-zsh`:
+Download the file and save it to `$ZSH_CUSTOM/themes/` (by default `~/.oh-my-zsh/custom/themes/`):
 ```
-curl -o $HOME/.oh-my-zsh/custom/themes/guri.zsh-theme https://raw.githubusercontent.com/victorfsf/guri/master/guri.zsh-theme
+curl -o $ZSH_CUSTOM/themes/guri.zsh-theme https://raw.githubusercontent.com/victorfsf/guri/master/guri.zsh-theme
 ```
 
 Then, update the `ZSH_THEME` variable in your `~/.zshrc`:
