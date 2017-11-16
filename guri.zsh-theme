@@ -149,4 +149,4 @@ add-zsh-hook precmd exec_time_stop
 
 PROMPT='
 $(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(dockerm_prompt_info)$(exec_time_prompt_info)
-$reset_color%1v$(get_ret_status)$reset_color'
+%{$fg_no_bold[white]%}%1v$(get_ret_status)%{$fg_no_bold[white]%}'
