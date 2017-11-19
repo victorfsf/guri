@@ -1,6 +1,6 @@
 GURI_DOCKER_ICON="@"
 GURI_DOT_FILE=".gurirc"
-GURI_EXEC_DOT_FILE=true
+GURI_EXEC_DOT_FILE=false
 GURI_SHOW_GIT_STASH=true
 GURI_SHOW_EXEC_TIME=true
 GURI_MIN_EXEC_TIME=1
@@ -141,7 +141,7 @@ get_ret_status() {
     echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL:%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL) "
 }
 
-add-zsh-hook precmd run_dot_file
+add-zsh-hook chpwd run_dot_file
 add-zsh-hook precmd virtualenv_indicator
 
 add-zsh-hook preexec exec_time_start
