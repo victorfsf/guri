@@ -79,9 +79,9 @@ git_prompt_info() {
     printf "$ZSH_THEME_GIT_PROMPT_SUFFIX$git_status$reset_color"
 }
 
-dockerm_prompt_info() {
-    if [[ -n "$DOCKER_MACHINE_NAME" ]]; then
-        echo "$fg[green] $GURI_DOCKER_ICON$DOCKER_MACHINE_NAME"
+zenv_prompt_info() {
+    if [[ -n "$Z_ENV_NAME" ]]; then
+        echo "$fg[green] $Z_UNICODE_SYMBOL"
     fi
 }
 
@@ -115,14 +115,20 @@ run_dot_file() {
 }
 
 virtualenv_indicator() {
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        psvar[1]="${VIRTUAL_ENV##*/} "
-        psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+    if [[ -n "$Z_ENV_NAME" ]]; then
+        psvar[1]="${Z_ENV_NAME} "
+    elif [[ -n "$VIRTUAL_ENV" ]]; then
+        if [[ "$PIPENV_ACTIVE" -eq 1 ]]; then
+            psvar[1]="venv "
+        else
+            psvar[1]="${VIRTUAL_ENV##*/} "
+        fi
     else
         psvar[1]=""
-        psvar[2]=""
     fi
+    psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
 }
+
 
 exec_time_start() {
     [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
@@ -148,5 +154,5 @@ add-zsh-hook preexec exec_time_start
 add-zsh-hook precmd exec_time_stop
 
 PROMPT='
-$(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(dockerm_prompt_info)$(exec_time_prompt_info)
+$(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(zenv_prompt_info)$(exec_time_prompt_info)
 %{$fg_no_bold[white]%}%1v$(get_ret_status)%{$fg_no_bold[white]%}'
