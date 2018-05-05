@@ -12,6 +12,9 @@ GURI_GIT_PROMPT_CLEAN=" $fg_bold[white]"
 GURI_GIT_PROMPT_AHEAD="$fg[green]⇡"
 GURI_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
 GURI_GIT_PROMPT_DIVERGED="$GURI_GIT_PROMPT_AHEAD$GURI_GIT_PROMPT_BEHIND"
+GURI_PYTHON_VERSION_VENV_COLOR="$FG[122]"
+GURI_PYTHON_VERSION_COLOR="$FG[153]"
+GURI_VENV_INDICATOR_COLOR="$FG[195]"
 
 ZSH_THEME_GIT_PROMPT_PREFIX="$GURI_GIT_PROMPT_PREFIX"
 ZSH_THEME_GIT_PROMPT_SUFFIX="$GURI_GIT_PROMPT_SUFFIX"
@@ -129,6 +132,10 @@ virtualenv_indicator() {
     psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
 }
 
+py_color() {
+    [[ -n "$VIRTUAL_ENV" ]] && echo "$GURI_PYTHON_VERSION_VENV_COLOR" || \
+        echo "$GURI_PYTHON_VERSION_COLOR"
+}
 
 exec_time_start() {
     [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
@@ -154,5 +161,5 @@ add-zsh-hook preexec exec_time_start
 add-zsh-hook precmd exec_time_stop
 
 PROMPT='
-$(level_prompt_info)$(git_prompt_info)$fg[yellow]%2v$(zenv_prompt_info)$(exec_time_prompt_info)
-%{$fg_no_bold[white]%}%1v$(get_ret_status)%{$fg_no_bold[white]%}'
+$(level_prompt_info)$(git_prompt_info)$(py_color)%2v$(zenv_prompt_info)$(exec_time_prompt_info)
+%{$GURI_VENV_INDICATOR_COLOR%}%1v$(get_ret_status)%{$fg_no_bold[white]%}'
