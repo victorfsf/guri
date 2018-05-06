@@ -1,10 +1,10 @@
-GURI_DOCKER_ICON="@"
 GURI_DOT_FILE=".gurirc"
 GURI_EXEC_DOT_FILE=false
 GURI_SHOW_GIT_STASH=true
 GURI_SHOW_EXEC_TIME=true
 GURI_MIN_EXEC_TIME=1
 GURI_PROMPT_SYMBOL="➜"
+
 GURI_GIT_PROMPT_PREFIX="$fg[white]"
 GURI_GIT_PROMPT_SUFFIX=""
 GURI_GIT_PROMPT_DIRTY=" $fg_bold[red]"
@@ -12,6 +12,9 @@ GURI_GIT_PROMPT_CLEAN=" $fg_bold[white]"
 GURI_GIT_PROMPT_AHEAD="$fg[green]⇡"
 GURI_GIT_PROMPT_BEHIND="$fg[magenta]⇣"
 GURI_GIT_PROMPT_DIVERGED="$GURI_GIT_PROMPT_AHEAD$GURI_GIT_PROMPT_BEHIND"
+
+GURI_PIPENV_VENV_NAME="venv"
+GURI_ALWAYS_SHOW_PYTHON_VERSION=true
 GURI_PYTHON_VERSION_VENV_COLOR="$FG[122]"
 GURI_PYTHON_VERSION_COLOR="$FG[153]"
 GURI_VENV_INDICATOR_COLOR="$FG[195]"
@@ -26,7 +29,7 @@ ZSH_THEME_GIT_PROMPT_DIVERGED="$GURI_GIT_PROMPT_DIVERGED"
 
 VIRTUAL_ENV_DISABLE_PROMPT="yes"
 
-get_pwd() {
+guri-pwd() {
     if [[ "$PWD" == "$HOME" ]]; then
         echo "~"
     else
@@ -34,11 +37,11 @@ get_pwd() {
     fi
 }
 
-get_folder_level() {
+guri-folder-level() {
     echo "$(expr $(grep -o '/' <<< "$PWD" | grep -c .) - 1)"
 }
 
-ssh_prompt_info() {
+guri-ssh-prompt() {
     if [[ -n "$SSH_CONNECTION" ]]; then
         echo "$fg[magenta]%n@%m » "
     elif [[ "$USER" == "root" ]]; then
@@ -46,12 +49,12 @@ ssh_prompt_info() {
     fi
 }
 
-level_prompt_info() {
-    printf "$fg_bold[cyan]$(get_folder_level)»"
-    printf "$reset_color $(ssh_prompt_info)$fg[blue]$(get_pwd)"
+guri-level-prompt() {
+    printf "$fg_bold[cyan]$(guri-folder-level)»"
+    printf "$reset_color $(guri-ssh-prompt)$fg[blue]$(guri-pwd)"
 }
 
-git_prompt_info() {
+guri-git-prompt() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return 0
     command git -c gc.auto=0 fetch &>/dev/null 2>&1 &|
     local index=$(command git status --porcelain -b 2> /dev/null)
@@ -82,14 +85,14 @@ git_prompt_info() {
     printf "$ZSH_THEME_GIT_PROMPT_SUFFIX$git_status$reset_color"
 }
 
-zenv_prompt_info() {
+guri-zenv-prompt() {
     if [[ -n "$Z_ENV_NAME" ]]; then
         echo "$fg[green] $Z_UNICODE_SYMBOL"
     fi
 }
 
-exec_time_prompt_info() {
-    [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
+guri-exec-time-prompt() {
+    [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return 0
     if [[ "$GURI_EXEC_TIME" -ge "$GURI_MIN_EXEC_TIME" ]]; then
     	local human_time time_color
     	local days=$(( $GURI_EXEC_TIME / 60 / 60 / 24 ))
@@ -111,38 +114,41 @@ exec_time_prompt_info() {
     fi
 }
 
-run_dot_file() {
+guri-run-dotfile() {
     if [[ "$GURI_EXEC_DOT_FILE" == true ]] && [[ -f "$GURI_DOT_FILE" ]]; then
         source "$GURI_DOT_FILE"
     fi
 }
 
-virtualenv_indicator() {
+guri-venv-indicator() {
     if [[ -n "$Z_ENV_NAME" ]]; then
         psvar[1]="${Z_ENV_NAME} "
     elif [[ -n "$VIRTUAL_ENV" ]]; then
         if [[ "$PIPENV_ACTIVE" -eq 1 ]]; then
-            psvar[1]="venv "
+            psvar[1]="$GURI_PIPENV_VENV_NAME "
         else
             psvar[1]="${VIRTUAL_ENV##*/} "
         fi
     else
         psvar[1]=""
     fi
-    psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+    if [[ "$GURI_ALWAYS_SHOW_PYTHON_VERSION" == true ]] || \
+        [[ -n "$VIRTUAL_ENV" ]]; then
+        psvar[2]=" v$(python --version 2>&1 | sed -e "s/Python //")"
+    fi
 }
 
-py_color() {
+guri-py-color() {
     [[ -n "$VIRTUAL_ENV" ]] && echo "$GURI_PYTHON_VERSION_VENV_COLOR" || \
         echo "$GURI_PYTHON_VERSION_COLOR"
 }
 
-exec_time_start() {
+guri-exec-time-start() {
     [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
     GURI_EXEC_TIME_START="$(date +%s)"
 }
 
-exec_time_stop() {
+guri-exec-time-stop() {
     [[ "$GURI_SHOW_EXEC_TIME" == false ]] && return
     [[ -n "$GURI_EXEC_TIME" ]] && unset GURI_EXEC_TIME
     [[ -z "$GURI_EXEC_TIME_START" ]] && return
@@ -150,16 +156,16 @@ exec_time_stop() {
     unset GURI_EXEC_TIME_START
 }
 
-get_ret_status() {
+guri-ret-status() {
     echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL:%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL) "
 }
 
-add-zsh-hook chpwd run_dot_file
-add-zsh-hook precmd virtualenv_indicator
+add-zsh-hook chpwd guri-run-dotfile
+add-zsh-hook precmd guri-venv-indicator
 
-add-zsh-hook preexec exec_time_start
-add-zsh-hook precmd exec_time_stop
+add-zsh-hook preexec guri-exec-time-start
+add-zsh-hook precmd guri-exec-time-stop
 
 PROMPT='
-$(level_prompt_info)$(git_prompt_info)$(py_color)%2v$(zenv_prompt_info)$(exec_time_prompt_info)
-%{$GURI_VENV_INDICATOR_COLOR%}%1v$(get_ret_status)%{$fg_no_bold[white]%}'
+$(guri-level-prompt)$(guri-git-prompt)$(guri-py-color)%2v$(guri-zenv-prompt)$(guri-exec-time-prompt)
+%{$GURI_VENV_INDICATOR_COLOR%}%1v$(guri-ret-status)%{$fg_no_bold[white]%}'
