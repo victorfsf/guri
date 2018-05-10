@@ -26,6 +26,7 @@ And reload your shell:
 ## Font & Colors
 
 To get the same font and colors used on the screenshot, use the configurations described bellow.
+
 *PS: This theme also looks pretty good with the [Nord](https://github.com/arcticicestudio/nord) palette!*
 
 #### Font:
