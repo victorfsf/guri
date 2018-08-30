@@ -160,11 +160,11 @@ guri-ret-status() {
     echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL:%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL) "
 }
 
-add-zsh-hook chpwd guri-run-dotfile
-add-zsh-hook precmd guri-venv-indicator
+chpwd_functions+=(guri-run-dotfile)
+precmd_function+=(guri-venv-indicator)
 
-add-zsh-hook preexec guri-exec-time-start
-add-zsh-hook precmd guri-exec-time-stop
+preexec_functions+=(guri-exec-time-start)
+precmd_function+=(guri-exec-time-stop)
 
 PROMPT='
 $(guri-level-prompt)$(guri-git-prompt)$(guri-py-color)%2v$(guri-zenv-prompt)$(guri-exec-time-prompt)
