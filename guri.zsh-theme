@@ -160,6 +160,8 @@ guri-ret-status() {
     echo "%(?:%{$fg_bold[green]%}$GURI_PROMPT_SYMBOL:%{$fg_bold[red]%}$GURI_PROMPT_SYMBOL) "
 }
 
+autoload -Uz add-zsh-hook
+
 add-zsh-hook chpwd guri-run-dotfile
 add-zsh-hook precmd guri-venv-indicator
 
